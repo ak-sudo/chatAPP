@@ -6,7 +6,7 @@ const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server, {
     cors: {
-        origin: 'https://chatapp-lrdx.onrender.com/' || 'http://localhost:5173',
+        origin: process.env.CLIENT_URL,
     }
 });
 

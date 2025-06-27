@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+.text-primary {
+  color: #1476ff !important;
+}
+.text-secondary {
+  color: #f3f5ff !important;
+}
+.text-light {
+  color: #f9faff !important;
+}
+.text-danger {
+  color: #ff4d4f !important;
+}
+.text-success {
+  color: #52c41a !important;
+} 
+
+.primary {
+  background-color: #1476ff !important;
+}
+.secondary {
+  background-color: #f3f5ff !important;
+}
+.light {
+  background-color: #f9faff !important;
+}
+.danger {
+  background-color: #ff4d4f !important;
+}
+.success {
+  background-color: #52c41a !important;
+}
+
+button:disabled{
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+}

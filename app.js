@@ -6,7 +6,7 @@ const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server, {
     cors: {
-        origin: process.env.CLIENT_URL,
+        origin: process.env.CLIENT_URL || 'http://localhost:3000',
     }
 });
 
@@ -117,16 +117,17 @@ app.post('/api/login', async (req, res, next) => {
                 } else {
                     const payload = {
                         userId: user._id,
-                        email: user.email
+                        email: user.email,
+                        isVerified: user.isVerified
                     }
                     const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'THIS_IS_A_JWT_SECRET_KEY';
 
-                    jwt.sign(payload, JWT_SECRET_KEY, { expiresIn: 84600 }, async (err, token) => {
+                    jwt.sign(payload, JWT_SECRET_KEY, { expiresIn: 3600 }, async (err, token) => {
                         await Users.updateOne({ _id: user._id }, {
                             $set: { token }
                         })
                         user.save();
-                        return res.status(200).json({ user: { id: user._id, email: user.email, name: user.name }, token: token })
+                        return res.status(200).json({ user: { id: user._id, email: user.email, name: user.name, isVerified: user.isVerified }, token: token })
                     })
                 }
             }
@@ -155,7 +156,7 @@ app.get('/api/conversations/:userId', async (req, res) => {
         const conversationUserData = Promise.all(conversations.map(async (conversation) => {
             const receiverId = conversation.members.find((member) => member !== userId);
             const user = await Users.findById(receiverId);
-            return { user: { receiverId: user._id, email: user.email, name: user.name }, conversationId: conversation._id }
+            return { user: { receiverId: user._id, email: user.email, name: user.name, isVerified: user.isVerified }, conversationId: conversation._id }
         }))
         res.status(200).json(await conversationUserData);
     } catch (error) {
@@ -216,7 +217,7 @@ app.get('/api/users/:userId', async (req, res) => {
         const userId = req.params.userId;
         const users = await Users.find({ _id: { $ne: userId } });
         const usersData = Promise.all(users.map(async (user) => {
-            return { user: { email: user.email, name: user.name, receiverId: user._id } }
+            return { user: { email: user.email, name: user.name, receiverId: user._id, isVerified: user.isVerified} }
         }))
         res.status(200).json(await usersData);
     } catch (error) {

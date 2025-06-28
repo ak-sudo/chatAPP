@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import Img1 from '../../assets/user.svg'
-import tutorialsdev from '../../assets/user.svg'
+import Img1 from '../../assets/user.png'
+import tutorialsdev from '../../assets/dp.png'
+import verified from '../../assets/verified.png'
 import Input from '../../components/Input'
 import { io } from 'socket.io-client'
+import { set } from 'mongoose'
 
 const Dashboard = () => {
 	const [user, setUser] = useState(JSON.parse(localStorage.getItem('user:detail')))
@@ -14,7 +16,7 @@ const Dashboard = () => {
 	const messageRef = useRef(null)
 
 	useEffect(() => {
-		setSocket(io('http://localhost:8080'))
+		setSocket(io('https://chatapp-lrdx.onrender.com/'))
 	}, [])
 
 	useEffect(() => {
@@ -37,7 +39,7 @@ const Dashboard = () => {
 	useEffect(() => {
 		const loggedInUser = JSON.parse(localStorage.getItem('user:detail'))
 		const fetchConversations = async () => {
-			const res = await fetch(`http://localhost:3000/api/conversations/${loggedInUser?.id}`, {
+			const res = await fetch(`https://chatapp-lrdx.onrender.com/api/conversations/${loggedInUser?.id}`, {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
@@ -51,7 +53,7 @@ const Dashboard = () => {
 
 	useEffect(() => {
 		const fetchUsers = async () => {
-			const res = await fetch(`http://localhost:3000/api/users/${user?.id}`, {
+			const res = await fetch(`https://chatapp-lrdx.onrender.com/api/users/${user?.id}`, {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
@@ -64,13 +66,14 @@ const Dashboard = () => {
 	}, [])
 
 	const fetchMessages = async (conversationId, receiver) => {
-		const res = await fetch(`http://localhost:3000/api/message/${conversationId}?senderId=${user?.id}&&receiverId=${receiver?.receiverId}`, {
+		const res = await fetch(`https://chatapp-lrdx.onrender.com/api/message/${conversationId}?senderId=${user?.id}&&receiverId=${receiver?.receiverId}`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
 			}
 		});
 		const resData = await res.json()
+		console.log('resData :>> ', resData);
 		setMessages({ messages: resData, receiver, conversationId })
 	}
 
@@ -82,7 +85,7 @@ const Dashboard = () => {
 			message,
 			conversationId: messages?.conversationId
 		});
-		const res = await fetch(`http://localhost:3000/api/message`, {
+		const res = await fetch(`https://chatapp-lrdx.onrender.com/api/message`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -97,12 +100,13 @@ const Dashboard = () => {
 	}
 
 	return (
+		
 		<div className='w-screen flex'>
 			<div className='w-[25%] h-screen bg-secondary overflow-scroll'>
 				<div className='flex items-center my-8 mx-14'>
 					<div><img src={tutorialsdev} width={75} height={75} className='border-5 border-green-500 p-[2px] rounded-full' /></div>
 					<div className='ml-8'>
-						<h3 className='text-2xl'>{user?.name}</h3>
+						<h3 className='text-2xl flex items-center'>{user?.name} {user.isVerified === true ? <img className='ml-1 h-5 w-5' src={verified}></img> : ''}</h3>
 						<p className='text-lg font-light'>My Account</p>
 					</div>
 				</div>
@@ -118,7 +122,7 @@ const Dashboard = () => {
 											<div className='cursor-pointer flex items-center' onClick={() => fetchMessages(conversationId, user)}>
 												<div><img src={Img1} className="w-[60px] h-[60px] rounded-full p-[2px] border border-blue-500" /></div>
 												<div className='ml-6'>
-													<h3 className='text-lg font-semibold'>{user?.name}</h3>
+													<h3 className='text-lg font-semibold flex items-center'>{user?.name} {user.isVerified === true ? <img className='ml-1 h-5 w-5' src={verified}></img> : ''}</h3>
 													<p className='text-sm font-light text-gray-600'>{user?.email}</p>
 												</div>
 											</div>
@@ -135,7 +139,7 @@ const Dashboard = () => {
 					<div className='w-[75%] secondary h-[80px] my-14 rounded-full flex items-center px-14 py-2'>
 						<div className='cursor-pointer'><img src={Img1} width={45} height={45} className="rounded-full border border-blue-500" /></div>
 						<div className='ml-6 mr-auto'>
-							<h3 className='text-lg'>{messages?.receiver?.name}</h3>
+							<h3 className='text-lg flex items-center'>{messages?.receiver?.name}  {messages.receiver.isVerified === true ? <img className='ml-1 h-5 w-5' src={verified}></img> : ''}</h3>
 							<p className='text-sm font-light text-gray-600'>{messages?.receiver?.email}</p>
 						</div>
 						<div className='cursor-pointer'>
@@ -196,7 +200,7 @@ const Dashboard = () => {
 										<div className='cursor-pointer flex items-center' onClick={() => fetchMessages('new', user)}>
 											<div><img src={Img1} className="w-[60px] h-[60px] rounded-full p-[2px] border border-blue-500" /></div>
 											<div className='ml-6'>
-												<h3 className='text-lg font-semibold'>{user?.name}</h3>
+												<h3 className='text-lg font-semibold flex items-center'>{user?.name} {user.isVerified === true ? <img className='ml-1 h-5 w-5' src={verified}></img> : ''}</h3>
 												<p className='text-sm font-light text-gray-600'>{user?.email}</p>
 											</div>
 										</div>

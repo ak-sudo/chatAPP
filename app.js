@@ -17,6 +17,7 @@ require('./db/connection');
 const Users = require('./db/models/users');
 const Conversations = require('./db/models/conversation');
 const Messages = require('./db/models/messages');
+const VerificationRequest = require("./db/models/verificationRequest")
 
 // app Use
 app.use(express.json());
@@ -222,6 +223,30 @@ app.get('/api/users/:userId', async (req, res) => {
         res.status(200).json(await usersData);
     } catch (error) {
         console.log('Error', error)
+    }
+})
+
+app.post('/api/verification-request', async (req, res) => {
+    try {
+        const { fullName, username, email, reason, portfolio } = req.body;
+        if (!fullName || !username || !email || !reason ) {
+            return res.status(400).send('Please fill all required fields');
+        }
+        const verifyreq = new VerificationRequest({
+            fullName,
+            username,
+            email,  
+            reason,
+            portfolio,
+            isVerified: false,
+            isVerificationRequest: true
+        });
+        await verifyreq.save();
+        console.log('success')
+        res.status(200).send('Verification request sent successfully');
+    } catch (error) {
+        console.log('Error', error);
+        res.status(500).send('Internal server error');
     }
 })
 

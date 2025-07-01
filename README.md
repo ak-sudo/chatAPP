@@ -11,13 +11,6 @@ A full-featured real-time chat application built with the **MERN Stack** (MongoD
 
 ---
 
-## 📸 Preview
-
-![Screenshot 1](./Screenshot%202025-06-30%20at%2012.20.08%20AM.png)
-![Screenshot 2](./Screenshot%202025-06-30%20at%2012.20.01%20AM.png)
-
----
-
 ## 🧰 Tech Stack
 
 - **Frontend:** React.js, TailwindCSS
